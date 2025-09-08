@@ -1,5 +1,5 @@
 ## Link deployment (PWS)
-https://levina-aurellia-footballshop.pbp.cs.ui.ac.id
+https://levina-aurellia-footballstation.pbp.cs.ui.ac.id
 
 ## Deskripsi Football Station
 Aplikasi ini adalah tugas PBP (Football Shop) dengan nama aplikasinya yaitu 'Football Station'. Aplikasi ini dibuat menggunakan Django (MVT) dan memenuhi requirement tugas 2 mata kuliah PBP yang antara lain seperti model `Product` memiliki atribut `name`, `price`, `description`, `thumbnail`, `category`, `is_featured` dengan sedikit tambahan atribut sebagai variasi.
