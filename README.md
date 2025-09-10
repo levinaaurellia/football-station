@@ -14,7 +14,7 @@ Selanjutnya, saya membuat fungsi view show_main di views.py yang akan me-render 
 2. Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.  
 [Jawaban]  
 Berikut adalah bagan yang telah dibuat:   
-![Alur Request-Response Django](bagan no2.png)   
+![Alur Request-Response Django](bagan_no2.png)   
 Ringkasan penjelasan tambahan:  
 - urls.py untuk menentukan URL mana akan ditangani oleh view mana.
 - views.py, berisi fungsi/class yang menangani request, mengambil data dari models, lalu menyiapkan context untuk template.
