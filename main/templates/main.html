@@ -1,10 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+
 <h1>{{ app_name }}</h1>
 
-...
 <h4>Nama: </h4>
-<p>{{ name }}<p></p>
+<p>{{ name }}</p>
 <h4>Kelas: </h4>
 <p>{{ class }}</p>
 <h4>NPM: </h4>
 <p>{{ npm }}</p>
-...
+
+<a href="{% url 'main:add_product' %}">
+    <button>+ Add Product</button>
+</a>
+
+<hr>
+
+<h3>Our Products</h3>
+
+{% for product in product_list %}
+    <div>
+        <h2><a href="{% url 'main:product_detail' product.id %}">{{ product.name }}</a></h2>
+        
+        <p><b>Brand:</b> {{ product.brand }}</p>
+        <p><b>Price:</b> Rp{{ product.price }}</p>
+        
+        {% if product.thumbnail %}
+            <img src="{{ product.thumbnail }}" alt="thumbnail {{ product.name }}" width="150">
+            <br />
+        {% endif %}
+        
+        <p>{{ product.description|truncatewords:20 }}...</p>
+        
+        <a href="{% url 'main:product_detail' product.id %}">
+            <button>View Details</button>
+        </a>
+    </div>
+    <hr>
+{% endfor %}
+
+{% endblock content %}
