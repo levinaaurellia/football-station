@@ -4,7 +4,7 @@ https://levina-aurellia-footballstation.pbp.cs.ui.ac.id
 ## Deskripsi Football Station
 Aplikasi ini adalah tugas PBP (Football Shop) dengan nama aplikasinya yaitu 'Football Station'. Aplikasi ini dibuat menggunakan Django (MVT) dan memenuhi requirement tugas 2 mata kuliah PBP yang antara lain seperti model `Product` memiliki atribut `name`, `price`, `description`, `thumbnail`, `category`, `is_featured` dengan sedikit tambahan atribut sebagai variasi.
 
-## Jawab Pertanyaan
+## Jawab Pertanyaan Tugas 2
 1. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step  
 [Jawaban]  
 Pertama, saya membuat project Django baru dengan perintah django-admin startproject footballstation . di terminal folder football-station, dengan begitu terbentuklah kerangka dasar proyek beserta file manage.py. Setelah itu, saya menambahkan sebuah app bernama main menggunakan python manage.py startapp main, lalu mendaftarkannya ke dalam INSTALLED_APPS di settings.py. Di dalam app main, saya mendesain sebuah model Product yang berisi beberapa field utama seperti name, price, description, thumbnail, category, dan is_featured. Saya juga menambahkan field tambahan stock serta brand dengan choices. Agar perubahan model tersimpan ke database, saya menjalankan python manage.py makemigrations dan python manage.py migrate.  
@@ -52,3 +52,35 @@ Referensi:
 3. https://opensource.com/article/18/8/django-framework
 4. https://www.geeksforgeeks.org/blogs/why-django-framework-is-best-for-web-development/
 5. https://www.djangoproject.com/start/overview/
+
+
+## Jawab Pertanyaan Tugas 3
+1. Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?  
+[Jawaban]  
+Pada dasarnya data delivery merupakan cara kita mengirimkan data dari satu bagian sistem ke bagian lain. Formatnya bisa macam-macam, misal HTML, XML, atau JSON. Kalau HTML biasanya dipakai untuk menampilkan data langsung ke pengguna lewat browser, sedangkan XML dan JSON lebih sering dipakai untuk pertukaran data antar aplikasi. 
+  
+Maka dari itu, kita perlu data delivery karena dalam pengembangan platform modern, data tidak hanya dipakai oleh satu tampilan saja, melainkan dipakai juga dalam:
+- data perlu data untuk ditampilkan ke user
+- aplikasi mobile mengambil data yang sama lewat API
+- layanan pihak ketiga/ integrasi (c/. dashboard analitik) perlu pula mengakses data itu
+- testing dan automasi lebih mudah dilakukan kalau ada akses ke data mentahnya. 
+Dengan adanya data delivery (terutama format XML atau JSON), backend bisa menyediakan data yang terpisah dari tampilan, sehingga lebih fleksibel, bisa dipakai berulang bagi frontend, dan membuat sistem lebih modular.  
+  
+  
+2. Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?  
+[Jawaban]  
+XML maupun JSON bisa dipakai untuk menyimpan dan bertukar data. XML memiliki kelebihan untuk kebutuhan dokumen yang kompleks karena mendukung metadata, namespace, dan transformasi seperti XSLT. Namun, cara aksesnya lah yang bisa dibilang lebih ribet, perlu parsing dengan XML DOM lalu looping elemen satu per satu. Sedangkan JSON lebih sederhana. Data disusun dengan format objek/array sehingga mudah dibaca, ditulis, dan diproses. Bahkan di JavaScript saat menerima JSON bisa langsung melakukan JSON.parse() dan data bisa langsung dipakai.  
+  
+Jadi, kalau diberi pilihan mana yang lebih baik, saya menjawabnya tergantung. XML lebih baik untuk dokumen yang kompleks dengan kebutuhan metadata, JSON lebih baik untuk API modern terutama web dan mobile, karena lebih ringan, mudah, dan cepat.
+
+Dan JSON lebih popular karena kebanyakan aplikasi sekarang butuh API yang cepat, efisien, dan mudah diintegrasikan dengan JavaScript atau bahasa pemrograman lain.
+
+3. Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut.
+Fungsi utama dari sebuah Form di Django adalah memvalidasi data. Ketika kita punya instance Form yang sudah di-bind dengan data input (misalnya dari request.POST), kita memanggil form.is_valid().
+
+   
+Referensi:  
+1. https://www.geeksforgeeks.org/html/difference-between-json-and-xml/
+2. https://docs.djangoproject.com/en/5.2/ref/forms/api/
+
+
