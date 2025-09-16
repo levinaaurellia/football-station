@@ -3,11 +3,12 @@ https://levina-aurellia-footballstation.pbp.cs.ui.ac.id
 
 ## Deskripsi Football Station
 Aplikasi ini adalah tugas PBP (Football Shop) dengan nama aplikasinya yaitu 'Football Station'. Aplikasi ini dibuat menggunakan Django (MVT) dan memenuhi requirement tugas 2 mata kuliah PBP yang antara lain seperti model `Product` memiliki atribut `name`, `price`, `description`, `thumbnail`, `category`, `is_featured` dengan sedikit tambahan atribut sebagai variasi.
----
 
+---
+## Jawab Pertanyaan Tugas 2
 <details>
 <summary>📘 Tugas 2</summary>
-## Jawab Pertanyaan Tugas 2
+
 1. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step  
 [Jawaban]  
 Pertama, saya membuat project Django baru dengan perintah django-admin startproject footballstation . di terminal folder football-station, dengan begitu terbentuklah kerangka dasar proyek beserta file manage.py. Setelah itu, saya menambahkan sebuah app bernama main menggunakan python manage.py startapp main, lalu mendaftarkannya ke dalam INSTALLED_APPS di settings.py. Di dalam app main, saya mendesain sebuah model Product yang berisi beberapa field utama seperti name, price, description, thumbnail, category, dan is_featured. Saya juga menambahkan field tambahan stock serta brand dengan choices. Agar perubahan model tersimpan ke database, saya menjalankan python manage.py makemigrations dan python manage.py migrate.  
