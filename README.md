@@ -18,7 +18,7 @@ Selanjutnya, saya membuat fungsi view show_main di views.py yang akan me-render 
 2. Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.  
 [Jawaban]  
 Berikut adalah bagan yang telah dibuat:   
-![Alur Request-Response Django](bagan_no2.png)   
+![Alur Request-Response Django](gambar/bagan_no2.png)   
 Ringkasan penjelasan tambahan:  
 - urls.py untuk menentukan URL mana akan ditangani oleh view mana.
 - views.py, berisi fungsi/class yang menangani request, mengambil data dari models, lalu menyiapkan context untuk template.
@@ -59,35 +59,92 @@ Referensi:
 </details>
 
 ---
-
-
 ## Jawab Pertanyaan Tugas 3
+<details>
+<summary>📘 Tugas 3</summary>
+
 1. Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?  
 [Jawaban]  
 Pada dasarnya data delivery merupakan cara kita mengirimkan data dari satu bagian sistem ke bagian lain. Formatnya bisa macam-macam, misal HTML, XML, atau JSON. Kalau HTML biasanya dipakai untuk menampilkan data langsung ke pengguna lewat browser, sedangkan XML dan JSON lebih sering dipakai untuk pertukaran data antar aplikasi. 
   
-Maka dari itu, kita perlu data delivery karena dalam pengembangan platform modern, data tidak hanya dipakai oleh satu tampilan saja, melainkan dipakai juga dalam:
+    Maka dari itu, kita perlu data delivery karena dalam pengembangan platform modern, data tidak hanya dipakai oleh satu tampilan saja, melainkan dipakai juga dalam:
 - data perlu data untuk ditampilkan ke user
 - aplikasi mobile mengambil data yang sama lewat API
 - layanan pihak ketiga/ integrasi (c/. dashboard analitik) perlu pula mengakses data itu
-- testing dan automasi lebih mudah dilakukan kalau ada akses ke data mentahnya. 
-Dengan adanya data delivery (terutama format XML atau JSON), backend bisa menyediakan data yang terpisah dari tampilan, sehingga lebih fleksibel, bisa dipakai berulang bagi frontend, dan membuat sistem lebih modular.  
-  
-  
+- testing dan automasi lebih mudah dilakukan kalau ada akses ke data mentahnya.  
+    Dengan adanya data delivery (terutama format XML atau JSON), backend bisa menyediakan data yang terpisah dari tampilan, sehingga lebih fleksibel, bisa dipakai berulang bagi frontend, dan membuat sistem lebih modular.  
+   
+   
 2. Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?  
 [Jawaban]  
 XML maupun JSON bisa dipakai untuk menyimpan dan bertukar data. XML memiliki kelebihan untuk kebutuhan dokumen yang kompleks karena mendukung metadata, namespace, dan transformasi seperti XSLT. Namun, cara aksesnya lah yang bisa dibilang lebih ribet, perlu parsing dengan XML DOM lalu looping elemen satu per satu. Sedangkan JSON lebih sederhana. Data disusun dengan format objek/array sehingga mudah dibaca, ditulis, dan diproses. Bahkan di JavaScript saat menerima JSON bisa langsung melakukan JSON.parse() dan data bisa langsung dipakai.  
+    
+    Jadi, kalau diberi pilihan mana yang lebih baik, saya menjawabnya tergantung. XML lebih baik untuk dokumen yang kompleks dengan kebutuhan metadata, JSON lebih baik untuk API modern terutama web dan mobile, karena lebih ringan, mudah, dan cepat.
   
-Jadi, kalau diberi pilihan mana yang lebih baik, saya menjawabnya tergantung. XML lebih baik untuk dokumen yang kompleks dengan kebutuhan metadata, JSON lebih baik untuk API modern terutama web dan mobile, karena lebih ringan, mudah, dan cepat.
+    Dan JSON lebih popular karena kebanyakan aplikasi sekarang butuh API yang cepat, efisien, dan mudah diintegrasikan dengan JavaScript atau bahasa pemrograman lain.
+   
+   
+3. Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut.   
+[Jawaban]  
+Method is_valid() pada form Django dipakai untuk melakukan validasi data yang dikirimkan lewat form. Ketika kita membuat instance form dan mengisinya dengan data (biasanya dari request.POST), kita perlu memanggil form.is_valid() supaya Django bisa mengecek apakah data tersebut memenuhi semua aturan validasi yang berlaku.   
+   
+    Proses validasi ini bukan hanya sekadar ngecek tipe data dasar (misalnya angka atau teks), tapi lebih dalam lagi:  
+- Django akan membersihkan data melalui mekanisme `full_clean()`, sehingga setiap field punya data yang sudah sesuai format.
+- Django juga menjalankan validator bawaan maupun custom (misalnya cek panjang minimal password).
+- Kalau form tersebut berbasis ModelForm, Django ikut memanggil `validate_unique()` untuk memastikan field yang diberi atribut `unique=True` tidak duplikat di database.
+- Semua error yang ditemukan tidak langsung menghentikan proses, tapi dikumpulkan di `form.errors`.
+   
+    Hanya setelah semua tahap validasi ini lolos, form.is_valid() akan mengembalikan True. Kalau ada yang gagal, ia mengembalikan False dan kita bisa kasih feedback yang sesuai di template.   
+    
+    Alasan mengapa kita butuh is_valid() adalah karena Django sudah menyediakan satu mekanisme validasi yang lengkap, reusable, dan aman. Kalau kita mencoba bikin validasi sendiri langsung di view, biasanya hasilnya lebih ribet, gampang ada bug, dan sulit dipakai ulang. Dengan is_valid(), kita bisa yakin data yang masuk sudah dicek dari banyak sisi (tipe data, format, constraint unik, dsb.) sebelum diproses lebih lanjut seperti disimpan ke database.   
 
-Dan JSON lebih popular karena kebanyakan aplikasi sekarang butuh API yang cepat, efisien, dan mudah diintegrasikan dengan JavaScript atau bahasa pemrograman lain.
+    
+   
+4. Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?  
+[Jawaban]  
+csrf_token dipakai untuk melindungi aplikasi web dari serangan Cross-Site Request Forgery (CSRF). Serangan CSRF terjadi ketika penyerang mencoba menggunakan sesi login pengguna yang masih aktif. Misalnya, pengguna sedang login ke aplikasi bank online, lalu penyerang mengirimkan link atau form tersembunyi yang jika diklik akan mengirim request transfer dana. Karena browser pengguna otomatis menyertakan cookie sesi (yang valid), request itu bisa dieksekusi seolah-olah datang dari pengguna asli.
 
-3. Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut.
-Fungsi utama dari sebuah Form di Django adalah memvalidasi data. Ketika kita punya instance Form yang sudah di-bind dengan data input (misalnya dari request.POST), kita memanggil form.is_valid().
+   Agar hal ini tidak terjadi, Django menyertakan token CSRF, yaitu string unik yang dihasilkan untuk setiap sesi pengguna. Token ini harus ikut dikirimkan bersama setiap request yang sifatnya mengubah data (POST, PUT, DELETE). Django kemudian akan mencocokkan token tersebut dengan yang tersimpan di server.
+- Jika token cocok → request dianggap valid.
+- Jika token tidak ada atau berbeda → request langsung ditolak (403 Forbidden).
 
+   Kalau kita tidak menambahkan csrf_token di dalam form, maka Django tidak bisa memverifikasi apakah request benar-benar dibuat oleh user yang sah atau hasil manipulasi pihak luar. Dapat berakibat seperti Form bisa dipalsukan oleh penyerang dan “diselundupkan” lewat link atau script berbahaya, bahkan penyerang bisa memanfaatkan sesi login aktif untuk melakukan aksi berbahaya (misalnya ubah password, kirim pesan spam, transfer dana, dsb.) tanpa sepengetahuan user.
+   
+  Jadi, csrf_token itu semacam pelindung yang memastikan kalau request memang berasal dari user yang sedang membuka form di aplikasi kita, bukan dari sumber luar yang berbahaya.
+
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).  
+[Jawaban]  
+Pertama, saya membuat direktori baru bernama templates di root folder proyek dan menambahkan file base.html sesuai dengan kode yang ada di tutorial 2. Setelah itu, saya menambahkan direktori templates tersebut ke dalam variabel TEMPLATES yang terdapat di settings.py pada direktori proyek football_station.
+   
+    Kemudian, saya mengubah berkas main.html yang ada di main/templates dengan kode yang disesuaikan dari tutorial 2. Saya juga membuat file baru bernama forms.py di direktori main, isinya sesuai dengan definisi form yang sudah ditentukan. Setelah itu, di views.py pada direktori main, saya menambahkan fungsi untuk tombol add_product dan juga fungsi untuk tombol detail_product.
+    
+    Selanjutnya, di urls.py pada direktori main, saya mengimpor fungsi-fungsi yang sudah dibuat tadi dan menambahkan path URL baru ke dalam variabel urlpatterns. Setelah itu, saya mengubah isi main.html serta membuat file add_product.html dan detail_product.html di main/templates untuk menampilkan form penambahan produk dan detail data dari setiap objek model.
+    
+    Berikutnya, saya menambahkan konfigurasi CSRF_TRUSTED_ORIGINS di settings.py pada direktori root proyek. Lalu, di views.py saya membuat empat fungsi tambahan untuk kebutuhan data delivery. Setelah fungsi tersebut selesai dibuat, saya mengimpornya ke dalam urls.py di direktori main dan menambahkan path baru ke dalam urlpatterns.
+    
+    Terakhir, karena saya menambahkan field UUID pada models.py, saya melakukan makemigrations terlebih dahulu, kemudian menjalankan runserver untuk memastikan proyek berjalan lancar. Setelah semuanya selesai, saya melakukan push proyek ke GitHub serta mengunggahnya ke PWS.
+    
+6. Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?   
+[Jawaban]  
+Menurut saya, tutorial 2 berjalan aman dan terkendali, kak Asdos juga sangat membantu dalam menjelaskan materi serta membimbing langkah-langkah pengerjaan, terima kasih kak.
    
 Referensi:  
 1. https://www.geeksforgeeks.org/html/difference-between-json-and-xml/
 2. https://docs.djangoproject.com/en/5.2/ref/forms/api/
-
-
+3. https://stackoverflow.com/questions/73173747/django-form-is-valid-what-does-it-check
+4. https://www.geeksforgeeks.org/python/csrf-token-in-django/
+    
+## Screenshoot Postman
+XML:   
+![SS XML](gambar/ss_xml.jpg)    
+   
+JSON:   
+![SS JSON](gambar/ss_json.jpg)   
+    
+XML by ID:   
+![SS XML BY ID](gambar/ss_xml_by_id.jpg)    
+    
+JSON by ID:   
+![SS JSON BY ID](gambar/ss_json_by_id.jpg)    
+</details>
+---
