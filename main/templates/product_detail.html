@@ -25,4 +25,10 @@
 <h3>Description</h3>
 <p>{{ product.description }}</p>
 
+{% if product.user %}
+    <p>Author: {{ product.user.username }}</p>
+{% else %}
+    <p>Author: Anonymous</p>
+{% endif %}
+
 {% endblock content %}

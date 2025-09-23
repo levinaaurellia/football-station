@@ -10,11 +10,20 @@
 <h4>NPM: </h4>
 <p>{{ npm }}</p>
 
-<a href="{% url 'main:add_product' %}">
-    <button>+ Add Product</button>
-</a>
+
+{% url 'main:add_product' as add_product %}
+<button onclick="location.href='{{add_product}}'">+ Add Product</button>
+{% url 'main:logout' as logout %}
+<button onclick="location.href='{{logout}}'">Logout</button>
+<h5>Sesi terakhir login: {{ last_login }}</h5>
 
 <hr>
+<a href="?filter=all">
+    <button type="button">All Articles</button>
+</a>
+<a href="?filter=my">
+    <button type="button">My Articles</button>
+</a> 
 
 <h3>Our Products</h3>
 
