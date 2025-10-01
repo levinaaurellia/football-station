@@ -210,4 +210,110 @@ Referensi:
 4. https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies#restrict_access_to_cookies
       
 </details>
+
 ---
+## Jawab Pertanyaan Tugas 5
+<details>
+<summary>📘 Tugas 5</summary>
+
+1. Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!     
+`[Jawaban]`    
+     
+    1) Aturan dengan !important: Selalu dianggap paling kuat. Jadi walaupun ada aturan lain dengan selector yang lebih spesifik, kalau properti sudah diberi !important, maka itu yang dipakai.        
+    2) Inline style: CSS yang ditulis langsung di dalam atribut elemen HTML `(<p style="color:red;">)` memiliki prioritas tinggi setelah !important.     
+    3) ID selector: Selector yang menggunakan #id lebih tinggi prioritasnya daripada class, attribute, atau element biasa. Misalnya #judul { ... }.     
+    4) Class, attribute, dan pseudo-class selector: Selector seperti .kelas, [type="text"], atau :hover berada di bawah ID.        
+    5) Element dan pseudo-element selector: Selector langsung nge-tag seperti div, p, atau pseudo-element seperti ::before, ::after adalah yang paling rendah prioritasnya.
+    6) Urutan penulisan: Jika tingkat prioritasnya sama, maka aturan yang ditulis paling akhir di stylesheet yang akan dipakai (prinsip cascade: the last rule wins).     
+
+    Jadi dapat disimpulkan urutannya adalah
+    `!important > Inline style > ID selector > Class/Attribute/Pseudo-class selector > Element/Pseudo-element selector > Aturan terakhir yang ditulis`      
+
+
+2. Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!     
+`[Jawaban]`      
+Responsive design penting karena mayoritas pengguna sekarang mengakses web lewat perangkat mobile. Tanpa desain yang responsive, tampilan di layar kecil jadi tidak nyaman sehingga teks susah dibaca, tombol sulit ditekan, dan pengguna harus zoom in–out. Dengan desain responsive, website otomatis menyesuaikan ukuran layar sehingga pengalaman pengguna lebih baik.  
+
+    Untuk contoh aplikasi yang sudah menerapkan responsive design yaitu Tokopedia. Saat dibuka di desktop maupun smartphone, tata letak produk, menu, dan tombol tetap rapi. Grid produk otomatis menyesuaikan lebar layar, sehingga pengguna bisa berbelanja dengan nyaman di semua perangkat. Kemudian, untuk contoh aplikaso yang belum menerapkan responsive design adalah website sekolah lama atau instansi pemerintah versi lama. Banyak yang masih memakai layout berbasis tabel dengan lebar tetap. Saat dibuka di smartphone, tampilan jadi mengecil, teks sulit dibaca, dan pengguna harus zoom in–out.     
+
+
+3. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!         
+`[Jawaban]`    
+    Dalam CSS Box Model, setiap elemen memiliki tiga lapisan utama di luar konten, berikut penjelasannya:       
+    1) Margin merupakan ruang di luar elemen yang berfungsi memberi jarak antar elemen. Tidak terlihat, hanya menambah spasi di luar border.
+        Implementasinya:
+        ```css
+        div {
+            margin: 20px; /* memberi jarak 20px antara elemen ini dengan elemen lain */
+        }
+
+    2) Border merupakan garis batas di sekitar elemen yang memisahkan konten dan padding dari margin. Bisa diatur warna, ketebalan, dan jenis garisnya.     
+        Implementasinya:
+        ```css
+        div {
+            border: 2px solid black; /* membuat garis hitam setebal 2px */
+        }
+
+    3) Padding merupakan ruang di dalam elemen, antara konten (misalnya teks/gambar) dengan border. Jadi, saat membuat konten tidak menempel langsung ke border.     
+        Implementasinya:
+        ```css
+        div {
+            padding: 15px; /* memberi jarak 15px antara teks dengan garis border */
+        }
+
+    Kemudian jika digabung dalam satu elemen, akan seperti ini:
+    ```css
+    div {
+    margin: 20px;              /* jarak luar */
+    border: 2px solid black;   /* garis batas */
+    padding: 15px;             /* jarak dalam */
+    }
+
+Cara menuliskannya bisa menggunakan inline CSS (`style="..."`), internal CSS (dalam tag `<style>`), atau external CSS (file `.css` terpisah). Namun, dalam implementasinya biasanya digunakan external CSS agar lebih rapi dan mudah dikelola.      
+
+Jadi, margin mengatur jarak antar elemen, border adalah garis pembatas, dan padding mengatur jarak dalam sebelum konten menyentuh border.      
+
+
+4. Jelaskan konsep flex box dan grid layout beserta kegunaannya!     
+`[Jawaban]`      
+`Flexbox` adalah sistem layout satu dimensi di CSS3 yang digunakan untuk mengatur elemen secara rapi dalam baris (row) atau kolom (column). Elemen dalam flex container bisa otomatis menyesuaikan ukuran, posisi, dan ruang kosong. Kegunaannya antara lain, mempermudah penyusunan elemen horizontal atau vertikal, mempermudah align (rata kiri, kanan, tengah) dan distribusi ruang antar elemen, serta cocok untuk menu navigasi, tombol sejajar, atau daftar produk dalam satu baris. Contoh implementasi:
+    ```css
+    .container {
+        display: flex;
+        justify-content: space-between; /* sebar rata */
+        align-items: center;           /* sejajarkan vertikal */
+    }
+    ```      
+                      
+    `Grid` adalah sistem layout dua dimensi di CSS3 yang bisa mengatur elemen dalam baris dan kolom sekaligus. Kita bisa membuat struktur layout halaman yang kompleks dengan lebih mudah. Kegunaanya yaitu lebih fleksibel dalam membagi proporsi kolom/baris dan cocok untuk layout besar seperti dashboard, galeri, atau halaman web yang butuh pembagian area jelas. Implementasinya:
+    ```css
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr; /* 3 kolom: kecil - besar - kecil */
+        gap: 10px; /* jarak antar elemen */
+    }
+    ```
+
+    Sehingga dapat disimpulkan perbandingan atau perbedaannya yaitu Flexbox fokus pada satu dimensi (baris atau kolom), sedangkan Grid bekerja pada dua dimensi (baris dan kolom).
+
+
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!     
+`[Jawaban]`     
+- Pertama, aku masukin Tailwind ke project dengan cara nambahin `<meta name="viewport">` sama script CDN Tailwind ke base.html. Jadi semua template bisa langsung pakai class-class bawaan Tailwind.
+- Terus aku bikin fitur edit dan delete di views.py. Untuk edit, aku bikin fungsi `edit_news` dengan parameter request dan id, pakai `NewsForm` biar bisa ubah data. Sedangkan buat delete, aku bikin fungsi `delete_news` yang ambil objek news sesuai id lalu langsung dihapus.
+- Kedua fungsi itu aku daftarin ke urls.py supaya bisa diakses lewat path `/edit` sama `/delete`.
+- Di main.html, aku tambahin tombol Edit dan Delete di setiap card berita, tapi tombol itu cuma muncul kalau user yang login sama dengan author dari berita. Jadi nggak semua orang bisa ubah atau hapus berita sembarangan.
+- Setelah itu aku bikin navbar.html sebagai komponen terpisah. Navbar ini aku include di main.html supaya tampil di semua halaman. Aku kasih Tailwind biar lebih rapi dan responsif, ada menu untuk login, register, atau logout sesuai kondisi user.
+- Aku juga bikin file global.css di folder static/css buat custom styling tambahan, terutama untuk form. File ini aku hubungkan ke base.html, jadi semua form bisa otomatis pakai style yang lebih konsisten.
+- Login dan register page aku ubah biar lebih modern pakai kombinasi Tailwind dan global.css, termasuk styling buat error messages, input focus, dan tombol.
+- Di halaman home, aku bikin card khusus untuk berita dengan file card_news.html. Kalau news kosong, aku tampilkan gambar `no-news.png` biar halaman tidak kosong.
+- Terakhir, bagian yang aku modifikasi sendiri ada di card_product.html. Kalau di tutorial aslinya cuma ada card_news untuk berita, aku bikin card_product buat nampilin produk. Bedanya, di sini aku tambahin badge stock (In Stock, Low Stock, Out of Stock) dengan warna berbeda sesuai kondisi stok, terus aku juga kasih efek hover (shadow hijau + scale gambar). Selain itu, aku taruh info tambahan kayak kategori produk, brand, harga di pojok atas, dan nama user yang nambahin produk di bagian bawah. Tombol Edit/Delete juga aku bikin pakai ikon SVG biar lebih clean.
+- Setelah semua selesai, aku jalanin server Django, terus aku tes tiap fitur: create, edit, delete, login, register, dan juga tampilan card. Semuanya jalan sesuai rencana, dan modifikasi card_product bikin tampilan produk lebih interaktif dibanding card_news bawaan tutorial.
+
+Referensi:  
+1. https://www.duniailkom.com/tutorial-belajar-css-urutan-prioritas-selector-css-specificity/
+2. https://www.duniailkom.com/tutorial-belajar-css-urutan-prioritas-selector-css-cascading/#google_vignette
+3. https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout/Basic_concepts_of_flexbox
+4. https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout
+      
+</details>
