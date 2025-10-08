@@ -39,7 +39,7 @@
         </div>
       {% endif %}
 
-      <form method="POST" action="" class="space-y-5">
+      <form method="POST" action="" class="space-y-5" id="register-form">
         {% csrf_token %}
         
         <div>
@@ -106,7 +106,7 @@
       <div class="mt-6 text-center">
         <p class="text-gray-500 text-sm">
           Already have an account? 
-          <a href="{% url 'main:login' %}" class="text-green-600 hover:text-green-700 font-medium">
+          <a href="{% url 'main:login_user' %}" class="text-green-600 hover:text-green-700 font-medium">
             Sign In
           </a>
         </p>
@@ -115,4 +115,21 @@
     </div>
   </div>
 </div>
+
+<script>
+const REGISTER_API = "{% url 'main:register' %}";
+document.getElementById('register-form')?.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const res = await fetch(REGISTER_API, { method:'POST', body: fd });
+  if(res.ok){
+    showToast('Registered', 'Account created successfully', 'success');
+    location.href = "{% url 'main:login_user' %}";
+  } else {
+    const err = await res.json().catch(()=>({error:'Register failed'}));
+    showToast('Register failed', err.error || 'Invalid data', 'error');
+  }
+});
+</script>
+
 {% endblock content %}

@@ -1,0 +1,42 @@
+<!-- CREATE MODAL -->
+<div id="createModal" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800/60">
+  <div class="bg-white rounded-lg shadow-xl w-11/12 max-w-lg p-0">
+    <div class="flex items-center justify-between p-4 border-b">
+      <h3 class="text-xl font-semibold">Add Product</h3>
+      <button class="text-gray-400 hover:text-gray-700" onclick="hideCreateModal()">×</button>
+    </div>
+    <form id="createForm" class="p-6 space-y-4">
+      <input name="name" class="w-full border rounded px-3 py-2" placeholder="Name" required />
+      <input name="price" type="number" class="w-full border rounded px-3 py-2" placeholder="Price" required />
+      <input name="thumbnail" class="w-full border rounded px-3 py-2" placeholder="Thumbnail URL" />
+      <textarea name="description" class="w-full border rounded px-3 py-2" rows="3" placeholder="Description"></textarea>
+      <div class="grid grid-cols-2 gap-3">
+        <select name="category" class="border rounded px-3 py-2">
+          <option value="jersey">Jersey</option>
+          <option value="shoes">Sepatu</option>
+          <option value="ball">Bola</option>
+          <option value="merch">Merch</option>
+        </select>
+        <select name="brand" class="border rounded px-3 py-2">
+          <option value="adidas">Adidas</option>
+          <option value="nike">Nike</option>
+          <option value="puma">Puma</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-3">
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="is_featured"> Featured
+        </label>
+        <input name="stock" type="number" min="0" class="border rounded px-3 py-2 w-28" placeholder="Stock" />
+      </div>
+      <div class="flex justify-end gap-3 pt-2">
+        <button type="button" class="px-4 py-2 border rounded" onclick="hideCreateModal()">Cancel</button>
+        <button type="submit" class="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  function showCreateModal(){ document.getElementById('createModal').classList.remove('hidden'); }
+  function hideCreateModal(){ document.getElementById('createModal').classList.add('hidden'); }
+</script>

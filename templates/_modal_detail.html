@@ -1,0 +1,31 @@
+<div id="detail-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center p-4 border-b">
+            <h2 id="detail-name" class="text-xl font-bold text-gray-800">Product Name</h2>
+            <button onclick="document.getElementById('detail-modal').classList.add('hidden')" class="text-gray-500 hover:text-gray-800">&times;</button>
+        </div>
+        
+        <div class="p-6">
+            <div id="detail-loading" class="text-center">Loading...</div>
+            <div id="detail-content" class="hidden">
+                <img id="detail-thumbnail" src="" alt="Product Image" class="w-full h-64 object-cover rounded-md mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Price</p>
+                        <p id="detail-price" class="text-xl font-semibold text-gray-800"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Brand</p>
+                        <p id="detail-brand" class="text-lg font-medium text-gray-800"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Stock</p>
+                        <p id="detail-stock" class="text-lg font-medium"></p>
+                    </div>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Description</h3>
+                <p id="detail-description" class="text-gray-600 whitespace-pre-line"></p>
+            </div>
+        </div>
+    </div>
+</div>
