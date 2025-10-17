@@ -14,8 +14,8 @@ urlpatterns = [
     path('xml/<str:product_id>/', show_xml_by_id, name='show_xml_by_id'),
     path('json/<str:product_id>/', show_json_by_id, name='show_json_by_id'),
     path('register/', register, name='register'),
-    path('login/', login_user, name='login_user'),
+    path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
-    path('ajax/products/<str:product_id>/edit/', edit_product, name='edit_product'),
-    path('ajax/products/<str:product_id>/delete/', delete_product, name='delete_product'),
+    path('news/<uuid:id>/edit', edit_product, name='edit_product'),
+    path('news/<uuid:id>/delete', delete_product, name='delete_product'),
 ]

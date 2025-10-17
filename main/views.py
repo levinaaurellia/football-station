@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.core import serializers
 from main.models import Product
 from main.forms import ProductForm
@@ -9,11 +9,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import datetime
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
-from django.utils.html import strip_tags
-from django.contrib.auth.models import User
-
 
 
 @login_required(login_url='/login')
@@ -37,32 +32,20 @@ def show_main(request):
     return render(request, "main.html", context)
 
 @login_required(login_url='/login')
-@csrf_exempt
-@require_POST
 def add_product(request):
-    name = strip_tags(request.POST.get("name") or "")
-    price = request.POST.get("price") or "0"
-    description = strip_tags(request.POST.get("description") or "")
-    thumbnail = request.POST.get("thumbnail") or ""
-    category = request.POST.get("category") or "jersey"
-    is_featured = (request.POST.get("is_featured") == 'on')
-    stock = int(request.POST.get("stock") or 0)
-    brand = request.POST.get("brand") or "adidas"
+    form = ProductForm(request.POST or None)
 
-    p = Product(
-        name=name,
-        price=int(price),
-        description=description,
-        thumbnail=thumbnail,
-        category=category,
-        is_featured=is_featured,
-        stock=stock,
-        brand=brand,
-        user=request.user if request.user.is_authenticated else None,
-    )
-    p.save()
-    return JsonResponse({'ok': True, 'product': _product_to_dict(p)}, status=201)
+    if form.is_valid() and request.method == 'POST':
+        product_entry = form.save(commit = False)
+        product_entry.user = request.user
+        product_entry.save()
+        return redirect('main:show_main')
 
+    context = {
+        'form': form
+    }
+
+    return render(request, "add_product.html", context)
 
 @login_required(login_url='/login')
 def product_detail(request, id):
@@ -80,28 +63,10 @@ def show_xml(request):
     xml_data = serializers.serialize("xml", product_list)
     return HttpResponse(xml_data, content_type="application/xml")
 
-
-#  Helper serializer 
-def _product_to_dict(p: Product):
-    return {
-        'id': str(p.pk),
-        'name': p.name,
-        'price': p.price,
-        'description': p.description,
-        'thumbnail': p.thumbnail,
-        'category': p.category,
-        'is_featured': p.is_featured,
-        'stock': p.stock,
-        'brand': p.brand,
-        'user_id': p.user.id if p.user else None, 
-        'username': p.user.username if p.user else None,
-    }
-
-
 def show_json(request):
-    qs = Product.objects.all().order_by('-pk')  # bebas
-    data = [_product_to_dict(p) for p in qs]
-    return JsonResponse(data, safe=False)
+    product_list = Product.objects.all()
+    json_data = serializers.serialize("json", product_list)
+    return HttpResponse(json_data, content_type="application/json")
 
 def show_xml_by_id(request, product_id):
     try:
@@ -113,86 +78,60 @@ def show_xml_by_id(request, product_id):
    
 def show_json_by_id(request, product_id):
     try:
-        p = Product.objects.get(pk=product_id)
-        return JsonResponse(_product_to_dict(p))
+       product_item = Product.objects.get(pk=product_id)
+       json_data = serializers.serialize("json", [product_item])
+       return HttpResponse(json_data, content_type="application/json")
     except Product.DoesNotExist:
-        return JsonResponse({'detail': 'Not found'}, status=404)
+       return HttpResponse(status=404)
 
-@csrf_exempt
 def register(request):
-    if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '')
-        password2 = request.POST.get('password2', '')
+    form = UserCreationForm()
 
-        if not username or not password or not password2:
-            return JsonResponse({'ok': False, 'error': 'All fields are required'}, status=400)
-        if password != password2:
-            return JsonResponse({'ok': False, 'error': 'Passwords do not match'}, status=400)
-        if User.objects.filter(username=username).exists():
-            return JsonResponse({'ok': False, 'error': 'Username already exists'}, status=400)
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
 
-        user = User.objects.create_user(username=username, password=password)
-        return JsonResponse({'ok': True, 'username': user.username}, status=201)
-    
-    return render(request, 'register.html')
-
-@csrf_exempt
 def login_user(request):
     if request.method == 'POST':
-        username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
+        form = AuthenticationForm(data=request.POST)
 
-        user = authenticate(request, username=username, password=password)
-        if user:
+        if form.is_valid():
+            user = form.get_user()
             login(request, user)
-            return JsonResponse({'ok': True, 'username': user.username})
-        return JsonResponse({'ok': False, 'error': 'Invalid credentials'}, status=400)
+            response = HttpResponseRedirect(reverse("main:show_main"))
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            return response
+    else:
+        form = AuthenticationForm(request)
     
-    return render(request, 'login.html')
+    context = {'form': form}
+    return render(request, 'login.html', context)
 
 def logout_user(request):
     logout(request)
-    response = HttpResponseRedirect(reverse('main:login_user'))
+    response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
 
-@csrf_exempt
-@require_POST
-def edit_product(request, product_id):
-    try:
-        p = Product.objects.get(pk=product_id)
-    except Product.DoesNotExist:
-        return JsonResponse({'ok': False, 'error': 'Not found'}, status=404)
+def edit_product(request, id):
+    news = get_object_or_404(Product, pk=id)
+    form = ProductForm(request.POST or None, instance=news)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')
 
-    name = strip_tags(request.POST.get("name") or p.name)
-    price = request.POST.get("price") or p.price
-    description = strip_tags(request.POST.get("description") or p.description)
-    thumbnail = request.POST.get("thumbnail") or p.thumbnail
-    category = request.POST.get("category") or p.category
-    is_featured = (request.POST.get("is_featured") == 'on') if ('is_featured' in request.POST) else p.is_featured
-    stock = int(request.POST.get("stock") or p.stock)
-    brand = request.POST.get("brand") or p.brand
+    context = {
+        'form': form
+    }
 
-    p.name = name
-    p.price = int(price)
-    p.description = description
-    p.thumbnail = thumbnail
-    p.category = category
-    p.is_featured = is_featured
-    p.stock = stock
-    p.brand = brand
-    p.save()
+    return render(request, "edit_product.html", context)
 
-    return JsonResponse({'ok': True, 'product': _product_to_dict(p)})
-
-@csrf_exempt
-@require_POST
-def delete_product(request, product_id):
-    try:
-        p = Product.objects.get(pk=product_id)
-        p.delete()
-        return JsonResponse({'ok': True})
-    except Product.DoesNotExist:
-        return JsonResponse({'ok': False, 'error': 'Not found'}, status=404)
-
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
