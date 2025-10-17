@@ -1,7 +1,7 @@
 {% load static %}
 <article class="bg-gray-100 rounded-lg shadow-xl overflow-hidden transition-all duration-300 hover:shadow-green-500/50 hover:-translate-y-1 group">
     <div class="relative">
-        <a href="{% url 'main:product_detail' product.id %}">
+        <a href="#" onclick="showProductDetailModal('{{ product.id }}'); return false;" class="cursor-pointer">
             <div class="aspect-[4/3]">
                 {% if product.thumbnail %}
                     <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
@@ -41,7 +41,7 @@
         </div>
 
         <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-tight">
-            <a href="{% url 'main:product_detail' product.id %}" class="group-hover:text-green-600 transition-colors">
+            <a href="#" onclick="showProductDetailModal('{{ product.id }}'); return false;" class="group-hover:text-green-600 transition-colors cursor-pointer">
                 {{ product.name }}
             </a>
         </h3>

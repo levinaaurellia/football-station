@@ -15,31 +15,11 @@
       </div>
 
       <!-- Form Errors Display -->
-      {% if form.non_field_errors %}
-        <div class="mb-6">
-          {% for error in form.non_field_errors %}
-            <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700">
-              {{ error }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
+      <div id="form-errors" class="mb-6 hidden">
+        <!-- Errors will be inserted here by JavaScript -->
+      </div>
 
-      {% if form.errors %}
-        <div class="mb-6">
-          {% for field, errors in form.errors.items %}
-            {% if field != '__all__' %}
-              {% for error in errors %}
-                <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
-                  <strong>{{ field|title }}:</strong> {{ error }}
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <form method="POST" action="" class="space-y-5">
+      <form id="registerForm" method="POST" class="space-y-5">
         {% csrf_token %}
         
         <div>
@@ -77,31 +57,16 @@
 
         <button 
           type="submit" 
+          id="submitButton"
           class="w-full bg-green-600 text-white font-medium py-3 px-4 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200">
           Create Account
         </button>
       </form>
 
       <!-- Messages Display -->
-      {% if messages %}
-        <div class="mt-6">
-          {% for message in messages %}
-            <div 
-              class="
-                px-4 py-3 rounded text-sm border
-                {% if message.tags == 'success' %}
-                  bg-green-50 border-green-200 text-green-700
-                {% elif message.tags == 'error' %}
-                  bg-red-50 border-red-200 text-red-700
-                {% else %}
-                  bg-gray-50 border-gray-200 text-gray-700
-                {% endif %}
-              ">
-              {{ message }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
+      <div id="messages" class="mt-6">
+        <!-- Messages will be inserted here by JavaScript -->
+      </div>
 
       <div class="mt-6 text-center">
         <p class="text-gray-500 text-sm">
@@ -115,4 +80,99 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const formData = {
+      username: document.getElementById('username').value,
+      password1: document.getElementById('password1').value,
+      password2: document.getElementById('password2').value
+    };
+    
+    const errorsContainer = document.getElementById('form-errors');
+    const messagesContainer = document.getElementById('messages');
+    const submitButton = document.getElementById('submitButton');
+
+    // Clear previous messages and errors
+    errorsContainer.innerHTML = '';
+    errorsContainer.classList.add('hidden');
+    messagesContainer.innerHTML = '';
+
+    // Show loading state
+    submitButton.disabled = true;
+    submitButton.innerHTML = 'Creating Account...';
+
+    try {
+      const response = await fetch('/register-ajax/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Show success message
+        messagesContainer.innerHTML = `
+          <div class="px-4 py-3 rounded text-sm border bg-green-50 border-green-200 text-green-700">
+            ${data.message}
+          </div>
+        `;
+        
+        // Show toast notification
+        if (typeof showToast === 'function') {
+          showToast('Success!', data.message, 'success');
+        }
+        
+        // Redirect to login page after successful registration
+        setTimeout(() => {
+          window.location.href = '/login/';
+        }, 2000);
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (error) {
+      console.error('Error during registration:', error);
+      
+      // Show error message
+      errorsContainer.innerHTML = `
+        <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700">
+          ${error.message}
+        </div>
+      `;
+      errorsContainer.classList.remove('hidden');
+      
+      // Show toast notification if available
+      if (typeof showToast === 'function') {
+        showToast('Error!', error.message, 'error');
+      }
+    } finally {
+      // Reset button state
+      submitButton.disabled = false;
+      submitButton.innerHTML = 'Create Account';
+    }
+  });
+
+  // Function to get CSRF token (if needed)
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
 {% endblock content %}
