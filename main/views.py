@@ -13,7 +13,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt 
 from django.views.decorators.http import require_POST  
 import json  
-
+import requests
+from django.utils.html import strip_tags
+from django.http import JsonResponse
 
 @login_required(login_url='/login')
 def show_main(request):
@@ -123,8 +125,8 @@ def logout_user(request):
     return response
 
 def edit_product(request, id):
-    news = get_object_or_404(Product, pk=id)
-    form = ProductForm(request.POST or None, instance=news)
+    product = get_object_or_404(Product, pk=id)
+    form = ProductForm(request.POST or None, instance=product)
     if form.is_valid() and request.method == 'POST':
         form.save()
         return redirect('main:show_main')
@@ -144,7 +146,7 @@ def delete_product(request, id):
 
 def get_products_json(request):
     filter_type = request.GET.get('filter', 'all')
-    
+
     if filter_type == 'my':
         product_list = Product.objects.filter(user=request.user)
     else:
@@ -315,3 +317,53 @@ def get_product_json_by_id(request, id):
         return JsonResponse(data)
     except Product.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Product not found'}, status=404)
+    
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        # Fetch image from external source
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+    
+
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = strip_tags(data.get("name", ""))  # Strip HTML tags
+        description = strip_tags(data.get("description", ""))  # Strip HTML tags
+        price = int(data.get("price", 0))
+        stock = int(data.get("stock", 0))
+        brand = data.get("brand", "adidas")
+        category = data.get("category", "jersey") # 'jersey' adalah default di modelmu
+        thumbnail = data.get("thumbnail", "")
+        is_featured = data.get("is_featured", False)
+        user = request.user
+        
+        new_product = Product(
+            name=name,                 
+            description=description,   
+            price=price,
+            stock=stock, 
+            brand=brand, 
+            category=category, 
+            thumbnail=thumbnail,  
+            is_featured=is_featured, 
+            user=user 
+        )
+        new_product.save()
+        
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
