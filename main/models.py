@@ -29,7 +29,7 @@ class Product(models.Model):
     stock = models.PositiveIntegerField(default=0)
     brand = models.CharField(max_length=50, choices=BRAND_CHOICES, default='adidas')
     # hubungin model dengan user
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True) # tambahkan ini
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name
